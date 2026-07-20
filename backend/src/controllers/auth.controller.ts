@@ -60,4 +60,14 @@ export class AuthController {
       return res.status(404).json({ error: message });
     }
   }
+
+  async listUsers(_req: Request, res: Response) {
+    try {
+      const users = await authService.listAllUsers();
+      return res.status(200).json(users);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'An unknown error occurred';
+      return res.status(500).json({ error: message });
+    }
+  }
 }

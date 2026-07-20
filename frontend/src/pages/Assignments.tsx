@@ -3,6 +3,7 @@ import api from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { Search, Plus, Loader2, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import axios from 'axios';
+import { CheckoutDialog } from '../components/assignments/CheckoutDialog';
 
 interface UserDetail {
   id: string;
@@ -53,6 +54,10 @@ export const Assignments: React.FC = () => {
   const [totalAssignments, setTotalAssignments] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Checkout modal controls
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
+
   const canManage = user?.role.name === 'SUPER_ADMIN' || user?.role.name === 'IT_ADMIN';
 
   // Fetch assignments
@@ -79,7 +84,7 @@ export const Assignments: React.FC = () => {
     }
     const debounceTimer = setTimeout(fetchAssignments, 300);
     return () => clearTimeout(debounceTimer);
-  }, [page, search, statusFilter]);
+  }, [page, search, statusFilter, fetchTrigger]);
 
   const handleReturn = async (id: string) => {
     const notes = window.prompt('Enter return notes (optional):');
@@ -125,7 +130,10 @@ export const Assignments: React.FC = () => {
           <p className="text-slate-400 mt-1">Track checked-out hardware and active assignments</p>
         </div>
         {canManage && (
-          <button className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary/95 transition-all shadow-lg shadow-primary/20">
+          <button
+            onClick={() => setIsCheckoutOpen(true)}
+            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary/95 transition-all shadow-lg shadow-primary/20"
+          >
             <Plus size={18} />
             Checkout Asset
           </button>
@@ -279,6 +287,12 @@ export const Assignments: React.FC = () => {
           </div>
         )}
       </div>
+
+      <CheckoutDialog
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        onSuccess={() => setFetchTrigger((prev) => prev + 1)}
+      />
     </div>
   );
 };
