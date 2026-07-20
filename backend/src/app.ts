@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import authRoutes from './routes/auth.routes';
+import categoryRoutes from './routes/category.routes';
 
 const app = express();
 
@@ -12,6 +13,9 @@ app.use(express.json());
 
 // Auth Routes
 app.use('/api/auth', authRoutes);
+
+// Category Routes
+app.use('/api/categories', categoryRoutes);
 
 // Base Route
 app.get('/', (req, res) => {
