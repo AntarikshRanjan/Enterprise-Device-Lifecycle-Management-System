@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.routes';
 import categoryRoutes from './routes/category.routes';
 import assetRoutes from './routes/asset.routes';
 import assignmentRoutes from './routes/assignment.routes';
+import maintenanceRoutes from './routes/maintenance.routes';
 
 const app = express();
 
@@ -24,6 +25,9 @@ app.use('/api/assets', assetRoutes);
 
 // Assignment Routes
 app.use('/api/assignments', assignmentRoutes);
+
+// Maintenance Routes
+app.use('/api/maintenance', maintenanceRoutes);
 
 // Base Route
 app.get('/', (req, res) => {
