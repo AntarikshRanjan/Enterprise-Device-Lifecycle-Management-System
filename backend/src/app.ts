@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import authRoutes from './routes/auth.routes';
 import categoryRoutes from './routes/category.routes';
 import assetRoutes from './routes/asset.routes';
+import assignmentRoutes from './routes/assignment.routes';
 
 const app = express();
 
@@ -20,6 +21,9 @@ app.use('/api/categories', categoryRoutes);
 
 // Asset Routes
 app.use('/api/assets', assetRoutes);
+
+// Assignment Routes
+app.use('/api/assignments', assignmentRoutes);
 
 // Base Route
 app.get('/', (req, res) => {
