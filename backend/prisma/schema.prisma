@@ -1,0 +1,245 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User Roles
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique // e.g. "SUPER_ADMIN", "IT_ADMIN", "MANAGER", "EMPLOYEE"
+  description String?
+  users       User[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Department
+model Department {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  managerId   String?
+  manager     User?    @relation("DepartmentManager", fields: [managerId], references: [id])
+  users       User[]   @relation("UserDepartment")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// User Accounts
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  roleId       String
+  role         Role        @relation(fields: [roleId], references: [id])
+  departmentId String?
+  department   Department? @relation("UserDepartment", fields: [departmentId], references: [id])
+  
+  // Relationships
+  managedDepartments Department[] @relation("DepartmentManager")
+  assignments        Assignment[] @relation("UserAssignments")
+  assignedBy         Assignment[] @relation("AssignedBy")
+  returnApprovedBy   Assignment[] @relation("ReturnApprovedBy")
+  reportedTickets    MaintenanceTicket[] @relation("Reporter")
+  technicianTickets  MaintenanceTicket[] @relation("Technician")
+  auditLogs          AuditLog[]
+  notifications      Notification[]
+  
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+// Asset Categories
+model AssetCategory {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  assets      Asset[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Vendors for assets
+model Vendor {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  contactName String?
+  email       String?
+  phone       String?
+  address     String?
+  assets      Asset[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Asset Status Enums
+enum AssetStatus {
+  AVAILABLE
+  ASSIGNED
+  RETURNED
+  MAINTENANCE
+  RETIRED
+  DISPOSED
+}
+
+// IT Assets
+model Asset {
+  id             String        @id @default(uuid())
+  tag            String        @unique // e.g. AST-0001
+  serialNumber   String        @unique
+  brand          String
+  model          String
+  categoryId     String
+  category       AssetCategory @relation(fields: [categoryId], references: [id])
+  purchaseDate   DateTime
+  vendorId       String?
+  vendor         Vendor?       @relation(fields: [vendorId], references: [id])
+  cost           Decimal       @db.Decimal(10, 2)
+  warrantyExpiry DateTime?
+  status         AssetStatus   @default(AVAILABLE)
+  imageUrl       String?
+  
+  // Relationships
+  assignments    Assignment[]
+  tickets        MaintenanceTicket[]
+  attachments    Attachment[]
+  
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status])
+  @@index([categoryId])
+}
+
+// Assignment Status Enums
+enum AssignmentStatus {
+  ACTIVE
+  RETURNED
+  PENDING_RETURN
+}
+
+// Device Checkout/Check-in Assignments
+model Assignment {
+  id                 String           @id @default(uuid())
+  assetId            String
+  asset              Asset            @relation(fields: [assetId], references: [id])
+  userId             String
+  user               User             @relation("UserAssignments", fields: [userId], references: [id])
+  assignedById       String
+  assignedBy         User             @relation("AssignedBy", fields: [assignedById], references: [id])
+  assignedAt         DateTime         @default(now())
+  returnedAt         DateTime?
+  returnApprovedById String?
+  returnApprovedBy   User?            @relation("ReturnApprovedBy", fields: [returnApprovedById], references: [id])
+  returnNotes        String?
+  status             AssignmentStatus @default(ACTIVE)
+  
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([assetId])
+  @@index([userId])
+  @@index([status])
+}
+
+// Ticket Priority Enums
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// Ticket Status Enums
+enum TicketStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+// Maintenance Ticketing
+model MaintenanceTicket {
+  id           String         @id @default(uuid())
+  assetId      String
+  asset        Asset          @relation(fields: [assetId], references: [id])
+  reporterId   String
+  reporter     User           @relation("Reporter", fields: [reporterId], references: [id])
+  technicianId String?
+  technician   User?          @relation("Technician", fields: [technicianId], references: [id])
+  title        String
+  description  String
+  priority     TicketPriority @default(MEDIUM)
+  status       TicketStatus   @default(OPEN)
+  cost         Decimal?       @db.Decimal(10, 2)
+  resolvedAt   DateTime?
+  
+  // Relationships
+  attachments  Attachment[]
+  
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([assetId])
+  @@index([reporterId])
+  @@index([status])
+}
+
+// Audit Logging
+model AuditLog {
+  id            String   @id @default(uuid())
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id])
+  action        String   // e.g. "USER_LOGIN", "ASSET_CREATE", "ASSET_ASSIGN"
+  targetTable   String   // e.g. "Asset", "Assignment"
+  targetId      String?
+  previousValue Json?
+  newValue      Json?
+  ipAddress     String?
+  timestamp     DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+}
+
+// App Notifications
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+// File Attachments
+model Attachment {
+  id        String             @id @default(uuid())
+  assetId   String?
+  asset     Asset?             @relation(fields: [assetId], references: [id])
+  ticketId  String?
+  ticket    MaintenanceTicket? @relation(fields: [ticketId], references: [id])
+  name      String
+  url       String
+  fileType  String
+  size      Int
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([assetId])
+  @@index([ticketId])
+}
