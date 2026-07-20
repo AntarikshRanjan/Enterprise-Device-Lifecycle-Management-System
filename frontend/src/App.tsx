@@ -4,6 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { Dashboard } from './pages/Dashboard';
+import { Assets } from './pages/Assets';
 
 function PlaceholderPage({ title }: { title: string }) {
   return (
@@ -26,7 +27,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/assets" element={<PlaceholderPage title="Asset Inventory" />} />
+              <Route path="/assets" element={<Assets />} />
               <Route path="/assignments" element={<PlaceholderPage title="Assignments" />} />
               <Route path="/maintenance" element={<PlaceholderPage title="Maintenance" />} />
               <Route path="/audit-logs" element={<PlaceholderPage title="Audit Logs" />} />
