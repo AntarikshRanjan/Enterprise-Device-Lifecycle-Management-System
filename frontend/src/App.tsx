@@ -7,6 +7,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Assets } from './pages/Assets';
 import { Assignments } from './pages/Assignments';
 import { Maintenance } from './pages/Maintenance';
+import { AuditLogs } from './pages/AuditLogs';
 
 function PlaceholderPage({ title }: { title: string }) {
   return (
@@ -32,7 +33,7 @@ function App() {
               <Route path="/assets" element={<Assets />} />
               <Route path="/assignments" element={<Assignments />} />
               <Route path="/maintenance" element={<Maintenance />} />
-              <Route path="/audit-logs" element={<PlaceholderPage title="Audit Logs" />} />
+              <Route path="/audit-logs" element={<AuditLogs />} />
               <Route path="/employees" element={<PlaceholderPage title="Employees" />} />
             </Route>
           </Route>
