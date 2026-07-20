@@ -7,6 +7,7 @@ import assetRoutes from './routes/asset.routes';
 import assignmentRoutes from './routes/assignment.routes';
 import maintenanceRoutes from './routes/maintenance.routes';
 import auditRoutes from './routes/audit.routes';
+import dashboardRoutes from './routes/dashboard.routes';
 
 const app = express();
 
@@ -32,6 +33,9 @@ app.use('/api/maintenance', maintenanceRoutes);
 
 // Audit Log Routes
 app.use('/api/audit-logs', auditRoutes);
+
+// Dashboard Routes
+app.use('/api/dashboard', dashboardRoutes);
 
 // Base Route
 app.get('/', (req, res) => {
