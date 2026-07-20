@@ -56,7 +56,8 @@ export class AuthService {
     });
 
     // Remove password hash from response
-    const { passwordHash: _, ...userWithoutPassword } = newUser;
+    const userWithoutPassword = { ...newUser } as Partial<typeof newUser>;
+    delete userWithoutPassword.passwordHash;
     return userWithoutPassword;
   }
 
@@ -86,7 +87,8 @@ export class AuthService {
       role: user.role.name,
     });
 
-    const { passwordHash: _, ...userWithoutPassword } = user;
+    const userWithoutPassword = { ...user } as Partial<typeof user>;
+    delete userWithoutPassword.passwordHash;
     return {
       token,
       user: userWithoutPassword,
@@ -106,7 +108,8 @@ export class AuthService {
       throw new Error('User not found');
     }
 
-    const { passwordHash: _, ...userWithoutPassword } = user;
+    const userWithoutPassword = { ...user } as Partial<typeof user>;
+    delete userWithoutPassword.passwordHash;
     return userWithoutPassword;
   }
 }

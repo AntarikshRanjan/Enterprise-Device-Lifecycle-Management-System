@@ -14,7 +14,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
     const payload = verifyToken(token);
     req.user = payload;
     next();
-  } catch (_error) {
+  } catch {
     return res.status(401).json({ error: 'Access token is expired or invalid' });
   }
 }

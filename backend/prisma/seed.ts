@@ -9,7 +9,10 @@ async function main() {
     { name: 'SUPER_ADMIN', description: 'Overall system administrator with full access' },
     { name: 'IT_ADMIN', description: 'IT Administrator managing assets, assignments, and returns' },
     { name: 'MANAGER', description: 'Department manager requesting/approving team assets' },
-    { name: 'EMPLOYEE', description: 'Standard employee viewing assigned assets and making requests' },
+    {
+      name: 'EMPLOYEE',
+      description: 'Standard employee viewing assigned assets and making requests',
+    },
   ];
 
   for (const r of roles) {
