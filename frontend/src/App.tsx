@@ -8,18 +8,7 @@ import { Assets } from './pages/Assets';
 import { Assignments } from './pages/Assignments';
 import { Maintenance } from './pages/Maintenance';
 import { AuditLogs } from './pages/AuditLogs';
-
-function PlaceholderPage({ title }: { title: string }) {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-3xl font-bold tracking-tight text-white">{title}</h1>
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400 animate-fade-in">
-        This is a placeholder view for the <strong className="text-white">{title}</strong> panel.
-        Implementation of this module is scheduled in subsequent development phases.
-      </div>
-    </div>
-  );
-}
+import { Employees } from './pages/Employees';
 
 function App() {
   return (
@@ -34,7 +23,7 @@ function App() {
               <Route path="/assignments" element={<Assignments />} />
               <Route path="/maintenance" element={<Maintenance />} />
               <Route path="/audit-logs" element={<AuditLogs />} />
-              <Route path="/employees" element={<PlaceholderPage title="Employees" />} />
+              <Route path="/employees" element={<Employees />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
