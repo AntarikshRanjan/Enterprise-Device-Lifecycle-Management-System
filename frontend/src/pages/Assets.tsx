@@ -3,6 +3,7 @@ import api from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { Search, Plus, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
+import { AssetFormDialog } from '../components/assets/AssetFormDialog';
 
 interface Category {
   id: string;
@@ -18,6 +19,9 @@ interface Asset {
   cost: string;
   status: string;
   purchaseDate: string;
+  warrantyExpiry?: string | null;
+  categoryId: string;
+  imageUrl?: string | null;
   category: {
     name: string;
   };
@@ -43,6 +47,11 @@ export const Assets: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalAssets, setTotalAssets] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Modal and edit trigger states
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [assetToEdit, setAssetToEdit] = useState<Asset | null>(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
 
   const canManage = user?.role.name === 'SUPER_ADMIN' || user?.role.name === 'IT_ADMIN';
 
@@ -84,7 +93,7 @@ export const Assets: React.FC = () => {
     }
     const debounceTimer = setTimeout(fetchAssets, 300);
     return () => clearTimeout(debounceTimer);
-  }, [page, search, selectedCategory, selectedStatus]);
+  }, [page, search, selectedCategory, selectedStatus, fetchTrigger]);
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this asset?')) return;
@@ -129,7 +138,13 @@ export const Assets: React.FC = () => {
           <p className="text-slate-400 mt-1">Manage and track physical organization hardware</p>
         </div>
         {canManage && (
-          <button className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary/95 transition-all shadow-lg shadow-primary/20">
+          <button
+            onClick={() => {
+              setAssetToEdit(null);
+              setIsFormOpen(true);
+            }}
+            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary/95 transition-all shadow-lg shadow-primary/20"
+          >
             <Plus size={18} />
             Add Asset
           </button>
@@ -240,7 +255,13 @@ export const Assets: React.FC = () => {
                     </td>
                     {canManage && (
                       <td className="p-4 pr-6 text-right space-x-2">
-                        <button className="rounded-lg border border-slate-800 bg-slate-900/40 px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-900 hover:text-white">
+                        <button
+                          onClick={() => {
+                            setAssetToEdit(asset);
+                            setIsFormOpen(true);
+                          }}
+                          className="rounded-lg border border-slate-800 bg-slate-900/40 px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-900 hover:text-white"
+                        >
                           Edit
                         </button>
                         <button
@@ -284,6 +305,17 @@ export const Assets: React.FC = () => {
           </div>
         )}
       </div>
+
+      <AssetFormDialog
+        isOpen={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          setAssetToEdit(null);
+        }}
+        onSuccess={() => setFetchTrigger((prev) => prev + 1)}
+        assetToEdit={assetToEdit}
+        categories={categories}
+      />
     </div>
   );
 };

@@ -12,11 +12,13 @@
     "format:write": "prettier --ignore-path ../.prettierignore --write ."
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
     "axios": "^1.18.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.25.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-hook-form": "^7.82.0",
     "react-router-dom": "^7.18.1",
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
