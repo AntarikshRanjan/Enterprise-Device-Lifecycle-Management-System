@@ -6,6 +6,7 @@ import { DashboardLayout } from './components/layout/DashboardLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Assets } from './pages/Assets';
 import { Assignments } from './pages/Assignments';
+import { Maintenance } from './pages/Maintenance';
 
 function PlaceholderPage({ title }: { title: string }) {
   return (
@@ -30,7 +31,7 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/assets" element={<Assets />} />
               <Route path="/assignments" element={<Assignments />} />
-              <Route path="/maintenance" element={<PlaceholderPage title="Maintenance" />} />
+              <Route path="/maintenance" element={<Maintenance />} />
               <Route path="/audit-logs" element={<PlaceholderPage title="Audit Logs" />} />
               <Route path="/employees" element={<PlaceholderPage title="Employees" />} />
             </Route>
